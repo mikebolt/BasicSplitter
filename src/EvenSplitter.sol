@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: GPL-3.0
+// SPDX-License-Identifier: MIT
 
 // Author: https://github.com/mikebolt
 // This software is provided with NO WARRANTY.
