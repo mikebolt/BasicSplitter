@@ -34,6 +34,7 @@ import "./openzeppelin/IERC20.sol";
 // This function will cost more gas than the default receive() because it needs to check
 // errors after sending ether to each address then repeat the process.
 // This will increase the deployment cost.
+// If you ever need to call this function then you should probably deploy a new splitter contract!
 #define ENABLE_SPLIT_UNSENT_ETHER
 
 // ENABLE_WITHDRAW_SINGLE_TOKEN:
