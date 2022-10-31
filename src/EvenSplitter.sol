@@ -94,7 +94,7 @@ contract EvenSplitter {
     }
     #endif
 
-    function splitAndWithdrawTokens(address[] tokenAddresses) public {
+    function splitAndWithdrawTokens(address[] calldata tokenAddresses) public {
         for (uint256 tokenIndex = 0; tokenIndex < tokenAddresses.length; tokenIndex++) {
             IERC20 token = IERC20(tokenAddresses[tokenIndex]);
 
