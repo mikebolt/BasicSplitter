@@ -5,7 +5,6 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
-//import "./openzeppelin/IERC20.sol";
 import "https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/1f18fea1de4c69355c773090c40fe083c08947b4/contracts/token/ERC20/IERC20.sol";
 
 // ERROR_FOR_ZERO_VALUE:
@@ -18,7 +17,7 @@ import "https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/1f
 // The client should be responsible for checking token balances before putting them in
 // the list of addresses sent to the withdraw function. It's a good idea to also
 // check that the balance is worth significantly more than the gas fee.
-//#define ERROR_FOR_ZERO_VALUE
+#define ERROR_FOR_ZERO_VALUE
 
 // SPLIT_ETHER:
 // Split ether using the receive() function. Remove to save some deployment gas cost.
@@ -36,13 +35,21 @@ import "https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/1f
 // errors after sending ether to each address then repeat the process.
 // This will increase the deployment cost.
 // If you ever need to call this function then you should probably deploy a new splitter contract!
-//#define ENABLE_SPLIT_ETHER_AND_RETRY
+#define ENABLE_SPLIT_ETHER_AND_RETRY
 
 // ENABLE_WITHDRAW_SINGLE_TOKEN:
 // If the users of this contract want to withdraw only one token instead of a list of tokens,
 // then it is *slightly* more gas efficient to use a function which only accepts a single
 // token address instead of a list of them. This increases deployment cost.
 #define ENABLE_WITHDRAW_SINGLE_TOKEN
+
+// RECIPIENT_INDEX_TYPE
+// Change this if there are more than 256 recipients.
+#define RECIPIENT_INDEX_TYPE uint8
+
+// TOKEN_INDEX_TYPE
+// I think 256 tokens is enough. Remember that each one adds gas fees and the client should check balances first.
+#define TOKEN_INDEX_TYPE uint8
 
 contract BasicSplitter {
 
@@ -66,7 +73,7 @@ contract BasicSplitter {
         // checks to save you gas costs.
         // Double-check your recipient addresses and be aware of possible problems with
         // contract recipients.
-        for (uint256 i = 0; i < recipients.length; i++) {
+        for (RECIPIENT_INDEX_TYPE i = 0; i < recipients.length; i++) {
             recipients[i].call{value: portion}("");
         }
     }
@@ -98,10 +105,10 @@ contract BasicSplitter {
         uint256 portion = remainingBalance / recipients.length;
 
         address[] memory validRecipients = new address[](recipients.length);
-        uint32 numValidRecipients = 0;
+        RECIPIENT_INDEX_TYPE numValidRecipients = 0;
 
         // First pass: try to send an even split to all recipients
-        uint256 i;
+        RECIPIENT_INDEX_TYPE i;
         for (i = 0; i < recipients.length; i++) {
             (bool sentToCurrentRecipient,) = recipients[i].call{value: portion}("");
             if (sentToCurrentRecipient) {
@@ -139,14 +146,14 @@ contract BasicSplitter {
 
         uint256 portion = balance / recipients.length;
 
-        for (uint256 i = 0; i < recipients.length; i++) {
+        for (RECIPIENT_INDEX_TYPE i = 0; i < recipients.length; i++) {
             token.transfer(recipients[i], portion);
         }
     }
     #endif
 
     function splitAndWithdrawTokens(address[] calldata tokenAddresses) public {
-        for (uint256 tokenIndex = 0; tokenIndex < tokenAddresses.length; tokenIndex++) {
+        for (TOKEN_INDEX_TYPE tokenIndex = 0; tokenIndex < tokenAddresses.length; tokenIndex++) {
             IERC20 token = IERC20(tokenAddresses[tokenIndex]);
 
             uint256 balance = token.balanceOf(address(this));
@@ -159,7 +166,7 @@ contract BasicSplitter {
 
             uint256 portion = balance / recipients.length;
 
-            for (uint256 i = 0; i < recipients.length; i++) {
+            for (RECIPIENT_INDEX_TYPE i = 0; i < recipients.length; i++) {
                 token.transfer(recipients[i], portion);
             }
         }

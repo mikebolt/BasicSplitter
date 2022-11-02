@@ -5,7 +5,6 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
-//import "./openzeppelin/IERC20.sol";
 import "https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/1f18fea1de4c69355c773090c40fe083c08947b4/contracts/token/ERC20/IERC20.sol";
 
 // ERROR_FOR_ZERO_VALUE:
@@ -18,7 +17,7 @@ import "https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/1f
 // The client should be responsible for checking token balances before putting them in
 // the list of addresses sent to the withdraw function. It's a good idea to also
 // check that the balance is worth significantly more than the gas fee.
-//#define ERROR_FOR_ZERO_VALUE
+#define ERROR_FOR_ZERO_VALUE
 
 // SPLIT_ETHER:
 // Split ether using the receive() function. Remove to save some deployment gas cost.
@@ -26,7 +25,7 @@ import "https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/1f
 
 // SPLIT_TOKENS:
 // Split tokens when the splitAndWithdrawTokens function is called. Remove to save some deployment gas cost.
-//#define SPLIT_TOKENS
+#define SPLIT_TOKENS
 
 // (one of the two SPLIT_* defines must be included, otherwise this contract will do nothing)
 
@@ -36,13 +35,21 @@ import "https://raw.githubusercontent.com/OpenZeppelin/openzeppelin-contracts/1f
 // errors after sending ether to each address then repeat the process.
 // This will increase the deployment cost.
 // If you ever need to call this function then you should probably deploy a new splitter contract!
-//#define ENABLE_SPLIT_ETHER_AND_RETRY
+#define ENABLE_SPLIT_ETHER_AND_RETRY
 
 // ENABLE_WITHDRAW_SINGLE_TOKEN:
 // If the users of this contract want to withdraw only one token instead of a list of tokens,
 // then it is *slightly* more gas efficient to use a function which only accepts a single
 // token address instead of a list of them. This increases deployment cost.
-//#define ENABLE_WITHDRAW_SINGLE_TOKEN
+#define ENABLE_WITHDRAW_SINGLE_TOKEN
+
+// RECIPIENT_INDEX_TYPE
+// Change this if there are more than 256 recipients.
+#define RECIPIENT_INDEX_TYPE uint8
+
+// TOKEN_INDEX_TYPE
+// I think 256 tokens is enough. Remember that each one adds gas fees and the client should check balances first.
+#define TOKEN_INDEX_TYPE uint8
 
 #define NUM_RECIPIENTS 4
 #define RECIPIENT_1 (address(0x14723A09ACff6D2A60DcdF7aA4AFf308FDDC160C))
@@ -131,7 +138,7 @@ contract BasicSplitterUnrolled {
         uint256 portion = remainingBalance / NUM_RECIPIENTS;
 
         address[] memory validRecipients = new address[](NUM_RECIPIENTS);
-        uint32 numValidRecipients = 0;
+        RECIPIENT_INDEX_TYPE numValidRecipients = 0;
 
         // First pass: try to send an even split to all recipients
 
@@ -221,7 +228,7 @@ contract BasicSplitterUnrolled {
         // Second pass: if necessary then evenly split the remaining amount among valid recipients
         if (numValidRecipients > 0 && numValidRecipients < NUM_RECIPIENTS) {
             portion = remainingBalance / numValidRecipients;
-            for (i = 0; i < numValidRecipients; i++) {
+            for (RECIPIENT_INDEX_TYPE i = 0; i < numValidRecipients; i++) {
                 validRecipients[i].call{value: portion}("");
             }
         }
@@ -274,7 +281,7 @@ contract BasicSplitterUnrolled {
     #endif
 
     function splitAndWithdrawTokens(address[] calldata tokenAddresses) public {
-        for (uint256 tokenIndex = 0; tokenIndex < tokenAddresses.length; tokenIndex++) {
+        for (TOKEN_INDEX_TYPE tokenIndex = 0; tokenIndex < tokenAddresses.length; tokenIndex++) {
             IERC20 token = IERC20(tokenAddresses[tokenIndex]);
 
             uint256 balance = token.balanceOf(address(this));
