@@ -16,6 +16,15 @@ This contract is configurable to help reduce contract size and gas costs
 depending on the owner's needs. It is designed to be as simple as possible
 to keep these fees to a minimum.
 
-# Future work
+## Future work
 
 More stuff will be added soon. Feedback is appreciated.
+
+- add tests
+- create frontend for contract creation and easy withdraws
+- create a version with unrolled loops for efficiency
+- determine gas costs for common configurations and compare with PaymentSplitter
+
+## See also
+
+[OpenZeppelin's PaymentSplitter.sol](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/finance/PaymentSplitter.sol) - this contract has a few differences
