@@ -5,12 +5,9 @@ UNTESTED
 A Solidity smart contract which you can send ether or ERC20 tokens to guarantee
 that it will be split evenly between the recipient addresses.
 
-Ether is split automatically in the receive function and the sender pays a
-small gas cost for the math.
-
-ERC20 tokens can be sent to the contract. It will hold them until a withdraw
-function is called. Anyone can pay the gas fee to call splitAndWithdrawToken or
-splitAndWithdrawTokens without negative consequence.
+Ether and ERC20 tokens can be sent to the contract. It will hold them until a
+withdraw function is called. Anyone can pay the gas fee to call
+splitEther, splitAndWithdrawToken, or splitAndWithdrawTokens.
 
 This contract is configurable to help reduce contract size and gas costs
 depending on the owner's needs. It is designed to be as simple as possible
@@ -52,8 +49,6 @@ contract BasicSplitterUnrolled {
 
 }
 ```
-
-It is very simple and it is designed to optimize gas costs.
 
 ## Comparison with PaymentSplitter
 
