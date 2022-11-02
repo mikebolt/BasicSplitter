@@ -53,7 +53,7 @@ contract BasicSplitterUnrolled {
 }
 ```
 
-It is very simple and it designed to optimize gas costs.
+It is very simple and it is designed to optimize gas costs.
 
 ## Comparison with PaymentSplitter
 
