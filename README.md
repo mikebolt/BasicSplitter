@@ -57,13 +57,13 @@ contract BasicSplitterUnrolled {
 - PaymentSplitter is usually more expensive to use. See below.
 - PaymentSplitter keeps the recipient (payee) addresses in storage. BasicSplitterUnrolled does not use any storage. Recipient addresses are hardcoded.
 - PaymentSplitter also keeps logs in memory.
-- PaymentSplitter supports arbitrary splits but BasicSplitter does not (this will be added later)
+- Both PaymentSplitter and BasicShareSplitterUnrolled support arbitrary shares. 
 - PaymentSplitter requires one call to "release" for each recipient address. BasicSplitter only requires one call to "splitEther" to send the payment to all recipients.
 - PaymentSplitter is not configurable. BasicSplitter uses a preprocessor to produce a custom contract.
 
 ## Gas costs
 
-These gas costs estimated in a local development environment.
+These gas costs were estimated in a local development environment.
 
 ```
 token transfer gas cost: 52157
@@ -94,11 +94,3 @@ BasicSplitterUnrolled w/ 4 address recipients, ether only minimal config, optimi
 deployment: 172975
 splitEther: 58797
 ```
-
-## Future work
-
-More stuff will be added. Feedback is appreciated.
-
-- add tests
-- add more stuff to README
-- create frontend for contract creation and easy withdraws
